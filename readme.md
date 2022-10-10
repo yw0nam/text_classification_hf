@@ -44,9 +44,9 @@ The data format is as follow
 
 text | label | etc |
 --- | --- | --- |
-pathologoy_text_1 | 0 | - |
-pathologoy_text_2 | 1 |  - |
-pathologoy_text_3 | 1| - | 
+pathologoy_text_1 | 0 | ... |
+pathologoy_text_2 | 1 | ... |
+pathologoy_text_3 | 1| ... | 
 ... | ... | ... |
 
 The data must include text, label columns for training and inferece.
