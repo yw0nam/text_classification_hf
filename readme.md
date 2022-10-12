@@ -25,8 +25,8 @@ b. Install PyTorch and torchvision following the [official instructions](https:/
 c. Clone this repository.
 
 ```shell
-git clone https://github.com/yw0nam/Adaspeech/
-cd Adaspeech
+git clone https://github.com/yw0nam/text_classification_hf/
+cd text_classification_hf
 ```
 
 d. Install requirments.
