@@ -86,7 +86,12 @@ python inference.py -c your_csv_path -m ./models_zoo/your_pretrained_model -d cp
 
 Here is model performance for test set.
 
-Dataset | Accuracy |F1-score | Precision |
---- |  --- | --- | --- |
-Helicobacter | 0.9959 | 0.9937 | 0.9912 |
-Adenoma | 0.9996 |  0.9997 | 1.0000 |
+Training Dataset | Test Dataset| Accuracy |F1-score | Precision |
+--- |  --- | --- | --- | --- | 
+Helicobacter | Helicobacter |0.9959 | 0.9937 | 0.9912 |
+Helicobacter | Adenoma |0.9997 | - | - |
+Adenoma | Adenoma |0.9996 |  0.9997 | 1.0000 |
+Adenoma | Helicobacter | 1.0000 |  - | - |
+
+
+
