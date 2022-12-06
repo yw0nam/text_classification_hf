@@ -3,15 +3,16 @@ from torch.utils.data import Dataset
 
 class MyDataset(Dataset):
 
-    def __init__(self, csv):
+    def __init__(self, csv, label_col):
         self.csv = csv
         self.csv['text'] = self.csv['text'].map(lambda x: x[:min(len(x), 512)])
+        self.label_col = label_col
     def __len__(self):
         return len(self.csv)
     
     def __getitem__(self, idx):
         input_seq = self.csv['text'].iloc[idx]
-        label = self.csv['label'].iloc[idx]
+        label = self.csv[self.label_col].iloc[idx]
 
         return {
             'inputs': input_seq,

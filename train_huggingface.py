@@ -11,6 +11,7 @@ import os, re
 def define_argparser():
     p = argparse.ArgumentParser()
     p.add_argument('--csv_path', required=True)
+    p.add_argument('--label_col', default='hgd', type=str)
     p.add_argument('--gradient_accumulation_steps', type=int, default=2)
     p.add_argument('--valid_ratio', type=float, default=.2)
     p.add_argument('--batch_size_per_device', type=int, default=16)
@@ -39,10 +40,10 @@ def main(config):
     csv = pd.read_csv(config.csv_path)
     csv['text'] = csv['text'].map(lambda x: map_fn(x))
     csv['text'] = csv['text'].map(lambda x: re.sub(p, '', x[1:]))
-    dev, _ = train_test_split(csv, test_size=0.1, random_state=1004, stratify=csv['label'])
-    train, val = train_test_split(dev, test_size=0.2, random_state=1004, stratify=dev['label'])
-    train_dataset = MyDataset(train)
-    val_dataset = MyDataset(val)
+    dev, _ = train_test_split(csv, test_size=0.1, random_state=1004, stratify=csv[config.label_col])
+    train, val = train_test_split(dev, test_size=0.2, random_state=1004, stratify=dev[config.label_col])
+    train_dataset = MyDataset(train ,config.label_col)
+    val_dataset = MyDataset(val, config.label_col)
     
     print(
         '|train| =', len(train_dataset),

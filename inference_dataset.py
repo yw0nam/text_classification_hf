@@ -7,12 +7,13 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 import argparse
 import re
+import torch 
 
 def define_argparser():
     p = argparse.ArgumentParser()
-    p.add_argument('--label_col', default='hgd', type=str)
     p.add_argument("-c",'--csv_path', type=str, required=True)
     p.add_argument("-m", '--pretrained_model', type=str, required=True)
+    p.add_argument("-d", "--device", choices=['cpu', 'gpu'], required=True)
     p.add_argument("-o", "--output_csv", type=str, default=None)
     args = p.parse_args()
 
@@ -31,19 +32,25 @@ def main(args):
     csv['text'] = csv['text'].map(lambda x: map_fn(x))
     csv['text'] = csv['text'].map(lambda x: re.sub(p, '', x[1:]))
     
-    _, test = train_test_split(csv, test_size=0.1, random_state=1004, stratify=csv[args.label_col])
     tokenizer = AutoTokenizer.from_pretrained("roberta-base")
     roberta = AutoModelForSequenceClassification.from_pretrained(args.pretrained_model, num_labels=2)
     
-    test_dataset = MyDataset(test, args.label_col)
+    test_dataset = MyDataset(csv)
     test_loader = DataLoader(test_dataset, 64, num_workers=8,
                                 collate_fn=data_collator(tokenizer), pin_memory=True,
                                 shuffle=False, drop_last=False)
     
-    pipe = pipeline("text-classification",
-                    model=roberta,
-                    tokenizer=tokenizer,
-                    device=0)
+    if args.device == 'cpu':
+        pipe = pipeline("text-classification",
+                        model=roberta,
+                        tokenizer=tokenizer)
+    elif args.device == 'gpu':
+        pipe = pipeline("text-classification",
+                        model=roberta,
+                        tokenizer=tokenizer,
+                        device=0)
+    else:
+        raise ValueError 
     
     labels = []
     outs = []
@@ -60,8 +67,8 @@ def main(args):
     print("Precision: %.4f"%(metrics.precision_score(labels, outs)))
     
     if args.output_csv:
-        test[args.label_col+'_out'] = outs
-        test.to_csv(args.output_csv, index=False)
+        csv['predicted_label'] = outs
+        csv.to_csv(args.output_csv, index=False)
 
 if __name__ == '__main__':
     args = define_argparser()
