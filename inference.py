@@ -31,16 +31,11 @@ def main(args):
                     tokenizer=tokenizer)
     
     out = pipe(text)[0]['label']
-    # if out == 'LABEL_0':
-    #     sys.exit(0)
-    # else:
-    #     sys.exit(1)
+    if out == 'LABEL_0':
+        sys.exit(0)
+    else:
+        sys.exit(1)
         
 if __name__ == '__main__':
     args = define_argparser()
-    
-    start = time()
     main(args)
-    end = time()
-    
-    print('time elaspsed:', end-start)
